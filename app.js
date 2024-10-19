@@ -8,9 +8,11 @@ import { dbConnection } from "./database/dbConnection.js";
 const app = express();
 dotenv.config({ path: "./config/config.env" });
 
+const port = process.env.PORT || 4000; // Ensure it binds to the PORT env variable
+
 app.use(
   cors({
-    origin: [process.env.FRONTEND_URL || 4000],
+    origin: [process.env.FRONTEND_URL],
     methods: ["POST"],
     credentials: true,
   })
@@ -19,13 +21,19 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/v1/reservation", reservationRouter);
-app.get("/", (req, res, next)=>{return res.status(200).json({
-  success: true,
-  message: "HELLO WORLD AGAIN"
-})})
+app.get("/", (req, res, next) => {
+  return res.status(200).json({
+    success: true,
+    message: "HELLO WORLD AGAIN",
+  });
+});
 
 dbConnection();
 
 app.use(errorMiddleware);
+
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
+});
 
 export default app;
